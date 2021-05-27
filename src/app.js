@@ -5,6 +5,7 @@ const { sequelize } = require('./model')
 const { getProfile } = require('./middleware/getProfile')
 const contracts = require('./controllers/contracts')
 const jobs = require('./controllers/jobs')
+const admin = require('./controllers/admin')
 
 const app = express();
 
@@ -15,5 +16,6 @@ app.set('models', sequelize.models)
 app.get('/contracts/:id', getProfile, contracts.getById)
 app.get('/contracts', getProfile, contracts.get)
 app.get('/jobs/unpaid', getProfile, jobs.getUnpaid)
+app.get('/admin/best-profession', admin.getBestProfession)
 
 module.exports = app;
