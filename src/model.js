@@ -21,7 +21,12 @@ Profile.init(
       allowNull: false
     },
     balance:{
-      type:Sequelize.DECIMAL(12,2)
+      type:Sequelize.DECIMAL(12,2),
+
+      // TODO: check why this is not working and fix it
+      // validate: {
+      //   min: 0
+      // }
     },
     type: {
       type: Sequelize.ENUM('client', 'contractor')
