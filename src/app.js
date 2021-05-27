@@ -12,5 +12,6 @@ app.set('sequelize', sequelize)
 app.set('models', sequelize.models)
 
 app.get('/contracts/:id', getProfile, contracts.getById)
+app.get('/contracts', getProfile, contracts.get)
 
 module.exports = app;
