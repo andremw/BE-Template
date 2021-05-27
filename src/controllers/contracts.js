@@ -1,26 +1,30 @@
 const Sequelize = require('sequelize');
 const { reject, isNil } = require('ramda')
 
-const { getContractById, getContracts } = require('../core/contracts');
-
 const withoutEmptyProps = reject(isNil);
+
+const getIdsFromProfile = (profile) => {
+  const { id, type } = profile;
+  const clientId = type === 'client' ? id : null
+  const contractorId = type === 'contractor' ? id : null
+
+  return { clientId, contractorId };
+};
 
 const getById = async (req, res) => {
   const { Contract } = req.app.get('models')
 
-  const fetchContract = ({ id, clientId, contractorId }) => {
-    const where = withoutEmptyProps({
-      id,
-      ClientId: clientId,
-      ContractorId: contractorId,
-    });
+  const { clientId: ClientId, contractorId: ContractorId } = getIdsFromProfile(req.profile);
 
-    return Contract.findOne({
-      where,
-    })
-  };
+  const where = withoutEmptyProps({
+    id: req.params.id,
+    ClientId,
+    ContractorId,
+  });
 
-  const contract = await getContractById(fetchContract)(req.params.id, req.profile);
+  const contract = await Contract.findOne({
+    where,
+  })
 
   if (!contract) return res.status(404).end()
   res.json(contract)
@@ -29,21 +33,19 @@ const getById = async (req, res) => {
 const get = async (req, res) => {
   const { Contract } = req.app.get('models')
 
-  const findNonTerminatedContracts = ({ clientId, contractorId }) => {
-    const where = withoutEmptyProps({
-      ClientId: clientId,
-      ContractorId: contractorId,
-      status: {
-        [Sequelize.Op.ne]: 'terminated'
-      },
-    })
+  const { clientId: ClientId, contractorId: ContractorId } = getIdsFromProfile(req.profile);
 
-    return Contract.findAll({
-      where
-    })
-  };
+  const where = withoutEmptyProps({
+    ClientId,
+    ContractorId,
+    status: {
+      [Sequelize.Op.ne]: 'terminated'
+    },
+  })
 
-  const contracts = await getContracts(findNonTerminatedContracts)(req.profile)
+  const contracts = await Contract.findAll({
+    where
+  })
 
   if (!contracts) return res.status(404).end()
   res.json(contracts)
