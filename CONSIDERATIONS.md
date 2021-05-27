@@ -1,0 +1,6 @@
+Considerations:
+
+- Started by writing unit tests for the core logic, but realized that it would be hard to understand the decoupled code because of the lack of types, and then removed the indirections and opted for simpler "integration" tests.
+- Even for a simple API we see that coupling the controller with the external technologies makes it harder to test if the correct calls with the correct parameters are happening during the route flow (for example, asserting that the calls to the ORM are being done with the proper parameters)
+- Using a typed language such as Typescript would help to follow a more "onion architecture" style and define interfaces that would be used by the controller while the concrete implementation would be passed as arguments. Eventually, it would be possible to write integration tests creating some fake functions that implemented the interface and would pretend to be doing something like DB operations.
+- For the `/pay` endpoint we can use sequelize's transaction mechanism and also a `min` validation in the model along with a validation in the code that the client have enough money to.
