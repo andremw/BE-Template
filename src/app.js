@@ -1,9 +1,10 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const {sequelize, Job, Profile} = require('./model')
+const { sequelize } = require('./model')
 
-const { getProfile } = require('./middleware/getProfile');
-const contracts = require('./controllers/contracts');
+const { getProfile } = require('./middleware/getProfile')
+const contracts = require('./controllers/contracts')
+const jobs = require('./controllers/jobs')
 
 const app = express();
 
@@ -13,5 +14,6 @@ app.set('models', sequelize.models)
 
 app.get('/contracts/:id', getProfile, contracts.getById)
 app.get('/contracts', getProfile, contracts.get)
+app.get('/jobs/unpaid', getProfile, jobs.getUnpaid)
 
 module.exports = app;
